@@ -1,0 +1,62 @@
+"use server";
+import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/lib/supabase/auth";
+
+const text = (form: FormData, key: string) => String(form.get(key) ?? "").trim();
+
+export async function saveMemory(form: FormData) {
+  const supabase = await requireAdmin();
+  const id = text(form, "id");
+  const title = text(form, "title");
+  const memory_date = text(form, "memory_date");
+  const caption = text(form, "caption") || null;
+  const list = JSON.parse(text(form, "media") || "[]") as Array<{ id: string; file_path: string; media_type: "image" | "video" }>;
+  if (!title || !/^\d{4}-\d{2}-\d{2}$/.test(memory_date)) throw new Error("Enter a title and valid memory date.");
+  if (!list.length) throw new Error("Add at least one uploaded photo or video.");
+  const cover_media_id = text(form, "cover_media_id") || list[0].id;
+  if (!list.some((item) => item.id === cover_media_id)) throw new Error("Choose a cover from this memory's media.");
+  let memoryId = id;
+  if (id) {
+    const { error } = await supabase.from("memories").update({ title, memory_date, caption, cover_media_id }).eq("id", id);
+    if (error) throw new Error(error.message);
+    const { error: mediaError } = await supabase.from("memory_media").delete().eq("memory_id", id);
+    if (mediaError) throw new Error(mediaError.message);
+  } else {
+    const { data, error } = await supabase.from("memories").insert({ title, memory_date, caption }).select("id").single();
+    if (error || !data) throw new Error(error?.message || "Could not create memory.");
+    memoryId = data.id;
+  }
+  const { error: mediaError } = await supabase.from("memory_media").insert(list.map((item, sort_order) => ({ ...item, memory_id: memoryId, sort_order })));
+  if (mediaError) throw new Error(mediaError.message);
+  const { error: coverError } = await supabase.from("memories").update({ cover_media_id }).eq("id", memoryId);
+  if (coverError) throw new Error(coverError.message);
+  revalidatePath("/memories"); revalidatePath("/admin");
+}
+
+export async function removeMemory(form: FormData) {
+  const supabase = await requireAdmin();
+  const id = text(form, "id");
+  const { data: media } = await supabase.from("memory_media").select("file_path").eq("memory_id", id);
+  if (media?.length) await supabase.storage.from("memories").remove(media.map((m) => m.file_path));
+  const { error } = await supabase.from("memories").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+  revalidatePath("/memories"); revalidatePath("/admin");
+}
+
+export async function setFeatured(form: FormData) {
+  const supabase = await requireAdmin();
+  const { error } = await supabase.rpc("set_featured_memory", { p_id: text(form, "id") || null });
+  if (error) throw new Error(error.message);
+  revalidatePath("/memories"); revalidatePath("/admin");
+}
+
+export async function saveSettings(form: FormData) {
+  const supabase = await requireAdmin();
+  const { error } = await supabase.from("site_settings").update({
+    landing_message: text(form, "landing_message"), button_label: text(form, "button_label"), initials: text(form, "initials"),
+    relationship_start_date: text(form, "relationship_start_date") || null,
+    counter_label: text(form, "counter_label"), counter_enabled: form.get("counter_enabled") === "on",
+  }).not("id", "is", null);
+  if (error) throw new Error(error.message);
+  revalidatePath("/"); revalidatePath("/admin");
+}
