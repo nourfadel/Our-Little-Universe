@@ -1,4 +1,4 @@
-export type MediaType = "image" | "video";
+export type MediaType = "image" | "video" | "audio";
 
 export interface Memory {
   id: string;

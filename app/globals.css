@@ -6,15 +6,18 @@
   --color-card: #111111;
   --color-muted: #a0a0a0;
   --color-rose: #a83245;
-  --font-arabic: var(--font-amiri), serif;
-  --font-display: var(--font-cormorant), serif;
-  --font-sans: var(--font-manrope), system-ui, sans-serif;
+  --font-arabic: "Amiri", "Noto Naskh Arabic", serif;
+  --font-display: "Cormorant Garamond", "Palatino Linotype", "Book Antiqua", serif;
+  --font-sans: "Manrope", "Segoe UI", system-ui, sans-serif;
 }
 
 html, body { background: var(--color-ink); color: #fff; }
 body { font-family: var(--font-sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
 
 :focus-visible { outline: 2px solid var(--color-rose); outline-offset: 3px; }
+
+.field { display: block; width: 100%; margin-top: .4rem; border: 1px solid rgb(255 255 255 / .1); border-radius: .55rem; background: var(--color-surface); padding: .65rem .75rem; color: white; }
+.field:focus { border-color: var(--color-rose); outline: none; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }

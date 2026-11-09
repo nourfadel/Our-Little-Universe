@@ -51,7 +51,7 @@ create table public.memory_media (
   id uuid primary key default gen_random_uuid(),
   memory_id uuid not null references public.memories (id) on delete cascade,
   file_path text not null,
-  media_type text not null check (media_type in ('image', 'video')),
+  media_type text not null check (media_type in ('image', 'video', 'audio')),
   sort_order integer not null default 0,
   created_at timestamptz not null default now()
 );
@@ -105,7 +105,7 @@ create table public.site_settings (
   id uuid primary key default gen_random_uuid(),
   landing_message text not null default 'ملقتش ونس للعمر أحسن منك',
   button_label text not null default 'US',
-  initials text not null default 'A & R',
+  initials text not null default 'A & A',
   relationship_start_date date,
   counter_label text not null default 'We''ve been together for',
   counter_enabled boolean not null default true,

@@ -35,11 +35,11 @@ create policy "members read settings" on public.site_settings
 create policy "admins update settings" on public.site_settings
   for update to authenticated using (public.is_admin()) with check (public.is_admin());
 
--- Storage: private bucket, 100 MB limit, images and videos only
+-- Storage: private bucket, 100 MB limit, images, videos, and audio
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values (
   'memories', 'memories', false, 104857600,
-  array['image/jpeg','image/png','image/webp','image/avif','image/heic','video/mp4','video/webm','video/quicktime']
+  array['image/jpeg','image/png','image/webp','image/avif','image/heic','video/mp4','video/webm','video/quicktime','audio/mpeg','audio/mp4','audio/wav','audio/x-wav','audio/webm','audio/ogg','audio/aac']
 )
 on conflict (id) do update
   set public = false, file_size_limit = excluded.file_size_limit, allowed_mime_types = excluded.allowed_mime_types;

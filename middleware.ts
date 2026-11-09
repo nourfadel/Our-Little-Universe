@@ -7,11 +7,18 @@ import { NextResponse, type NextRequest } from "next/server";
  * this is the first gate.
  */
 export async function middleware(request: NextRequest) {
+  const projectUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!projectUrl || !anonKey) {
+    if (request.nextUrl.pathname === "/login") return NextResponse.next();
+    const setupUrl = new URL("/login?setup=1", request.url);
+    return NextResponse.redirect(setupUrl);
+  }
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    projectUrl,
+    anonKey,
     {
       cookies: {
         getAll: () => request.cookies.getAll(),

@@ -5,7 +5,7 @@ import type { SiteSettings } from "@/types/memory";
 const FALLBACK: Omit<SiteSettings, "id" | "updated_at"> = {
   landing_message: "ملقتش ونس للعمر أحسن منك",
   button_label: "US",
-  initials: "A & R",
+  initials: "A & A",
   relationship_start_date: null,
   counter_label: "We've been together for",
   counter_enabled: false,
