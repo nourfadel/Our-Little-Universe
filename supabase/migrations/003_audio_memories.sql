@@ -12,7 +12,7 @@ set file_size_limit = 104857600,
     allowed_mime_types = array[
       'image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/heic',
       'video/mp4', 'video/webm', 'video/quicktime',
-      'audio/mpeg', 'audio/mp4', 'audio/wav', 'audio/x-wav',
+      'audio/mpeg', 'audio/mp4', 'audio/m4a', 'audio/x-m4a', 'audio/wav', 'audio/x-wav',
       'audio/webm', 'audio/ogg', 'audio/aac'
     ]
 where id = 'memories';

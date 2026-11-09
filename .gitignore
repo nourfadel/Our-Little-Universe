@@ -1,7 +1,19 @@
-node_modules
-.pnpm-store
-.next
-.env*.local
-.env
+/node_modules/
+/.pnpm-store/
+/.npm-cache/
+/.next/
+/out/
+/.vercel/
+/coverage/
+
+# Local and deployment environment files. Keep only the placeholder template.
+.env*
+!.env.example
+
+# Generated Next.js and TypeScript files.
 next-env.d.ts
 *.tsbuildinfo
+
+# Editor and operating system files.
+.DS_Store
+Thumbs.db
